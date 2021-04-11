@@ -37,7 +37,7 @@ class CBlock:
         digest.update(bytes(str(self.previousHash),'utf8'))
         return digest.finalize()
 
-if __name__ == '__main___':
+if __name__ == '__main__':
     root = CBlock('I am root', None)
     B1 = CBlock(b'I am a child.', root)
     B2 = CBlock('I am B1s brother', root)
