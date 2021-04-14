@@ -34,7 +34,7 @@ class Tx:
                 if signatures.verify(message, s, addr):
                     found = True
             if not found:
-                print ("No good sig found for " + str(message))
+                #print ("No good sig found for " + str(message))
                 return False
             if amount < 0:
                 return False
@@ -62,6 +62,21 @@ class Tx:
         data.append(self.outputs)
         data.append(self.reqd)
         return data
+    def __repr__(self):
+        reprstr = "INPUTS:\n"
+        for addr, amt in self.inputs:
+            reprstr = reprstr + str(amt) + " from " + str(addr) + "\n"
+        reprstr = reprstr + "OUTPUTS:\n"
+        for addr, amt in self.outputs:
+            reprstr = reprstr + str(amt) + " to " + str(addr) + "\n"
+        reprstr = reprstr + "REQD:\n"
+        for r in self.reqd:
+            reprstr = reprstr + str(r) + "\n"
+        reprstr = reprstr + "SIGS:\n"
+        for s in self.sigs:
+            reprstr = reprstr + str(s) + "\n"
+        reprstr = reprstr + "END\n"
+        return reprstr
 
 if __name__ == "__main__":
     pr1, pu1 = signatures.generate_keys()
@@ -99,7 +114,7 @@ if __name__ == "__main__":
     
     # Wrong signatures
     Tx4 = Tx()
-    Tx4.add_input(pu1, 2)
+    Tx4.add_input(pu1, 1)
     Tx4.add_output(pu2, 1)
     Tx4.sign(pr2)
 
