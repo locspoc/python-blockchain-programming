@@ -6,18 +6,31 @@ import pickle
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 
+reward = 25.0
 
 class TxBlock (CBlock):
     def __init__(self, previousBlock):
         super(TxBlock, self).__init__([], previousBlock)
     def addTx(self, Tx_in):
         self.data.append(Tx_in)
+    def __count_totals(self):
+        total_in = 0
+        total_out = 0
+        for tx in self.data:
+            for addr, amt in tx.inputs:
+                total_in = total_in + amt
+            for addr, amt in tx.outputs:
+                total_out = total_out + amt
+        return total_in, total_out
     def is_valid(self):
         if not super(TxBlock, self).is_valid():
             return False
         for tx in self.data:
             if not tx.is_valid():
                 return False
+        total_in, total_out = self.__count_totals()
+        if total_out - total_in - reward > 0.00000000001:
+            return False
         return True
 
 if __name__ == "__main__":
@@ -30,6 +43,7 @@ if __name__ == "__main__":
     Tx1.add_output(pu2, 1)
     Tx1.sign(pr1)
 
+    # Tx1.__count_totals()
     if Tx1.is_valid():
         print("Success! Tx is valid")
 
@@ -64,7 +78,7 @@ if __name__ == "__main__":
     Tx4.add_input(pu1,1)
     Tx4.add_output(pu2,1)
     Tx4.add_reqd(pu3)
-    Tx4.sign(pr2)
+    Tx4.sign(pr1)
     Tx4.sign(pr3)
     B1.addTx(Tx4)
 
@@ -94,3 +108,43 @@ if __name__ == "__main__":
             print ("ERROR! Bad block verified.")
         else:
             print ("Success! Bad blocks detected.")
+
+    # Test mining rewards and tx fees
+    pr4, pu4 = generate_keys()
+    B3 = TxBlock(B2)
+    B3.addTx(Tx2)
+    B3.addTx(Tx3)
+    B3.addTx(Tx4)
+    Tx6 = Tx()
+    Tx6.add_output(pu4,25)
+    B3.addTx(Tx6)
+    if B3.is_valid():
+        print ("Success! Block reward succeeds.")
+    else:
+        print ("ERROR! Block reward fail.")
+    
+    B4 = TxBlock(B3)
+    B4.addTx(Tx2)
+    B4.addTx(Tx3)
+    B4.addTx(Tx4)
+    Tx7 = Tx()
+    Tx7.add_output(pu4,25.2)
+    B4.addTx(Tx7)
+    if B4.is_valid():
+        print ("Success! Tx fees succeeds.")
+    else:
+        print ("ERROR! Tx fees fail.")
+    
+    # Greedy miner
+    B5 = TxBlock(B4)
+    B5.addTx(Tx2)
+    B5.addTx(Tx3)
+    B5.addTx(Tx4)
+    Tx8 = Tx()
+    Tx8.add_output(pu4,26.2)
+    B5.addTx(Tx8)
+    if not B5.is_valid():
+        print ("Success! Greedy miner detected.")
+    else:
+        print ("ERROR! Greedy miner not detected.")
+
