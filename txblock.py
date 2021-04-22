@@ -10,13 +10,17 @@ from cryptography.hazmat.primitives import hashes
 import time
 
 reward = 25.0
+leading_zeros = 2
+next_char_limit = 20
 
 class TxBlock (CBlock):
     nonce = "AAAAAAA"
     def __init__(self, previousBlock):
         super(TxBlock, self).__init__([], previousBlock)
+
     def addTx(self, Tx_in):
         self.data.append(Tx_in)
+
     def __count_totals(self):
         total_in = 0
         total_out = 0
@@ -26,6 +30,7 @@ class TxBlock (CBlock):
             for addr, amt in tx.outputs:
                 total_out = total_out + amt
         return total_in, total_out
+
     def is_valid(self):
         if not super(TxBlock, self).is_valid():
             return False
@@ -38,9 +43,23 @@ class TxBlock (CBlock):
         return True
 
     def good_nonce(self):
-        return False
+        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        digest.update(bytes(str(self.data), 'utf8'))
+        digest.update(bytes(str(self.previousHash),'utf8'))
+        digest.update(bytes(str(self.nonce),'utf8'))
+        this_hash = digest.finalize()
+
+        if this_hash[:leading_zeros] != bytes(''.join([ '\x4f' for i in range (leading_zeros)]),'utf8'):
+            return False
+        return int(this_hash[leading_zeros]) < next_char_limit
+        
     def find_nonce(self):
-        return self.nonce
+        for i in range(1000000):
+            self.nonce = ''.join([ 
+                chr(random.randint(0,255)) for i in range(10*leading_zeros)])
+            if self.good_nonce():
+                return self.nonce
+        return None
 
 if __name__ == "__main__":
     pr1, pu1 = generate_keys()
