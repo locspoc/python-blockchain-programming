@@ -11,7 +11,9 @@ TCP_PORT = 5005
 def sendBlock(ip_addr, blk):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip_addr, TCP_PORT))
-    s.send(blk)
+    data = pickle.dumps(blk)
+    s.send(data)
+    s.close()
     return False
 
 if __name__ == "__main__":
@@ -36,4 +38,6 @@ if __name__ == "__main__":
     B1.addTx(Tx1)
     B1.addTx(Tx2)
 
-    sendBlock('localhost', B1)
+    sendBlock('192.168.1.106', B1)
+
+    sendBlock('192.168.1.106', Tx2)
