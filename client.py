@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     Tx2 = transactions.Tx()
     Tx2.add_input(pu3,2.3)
-    Tx2.add_output(pu2,1.0)
+    Tx2.add_input(pu2,1.0)
     Tx2.add_output(pu1,3.1)
     Tx2.sign(pr2)
     Tx2.sign(pr3)
