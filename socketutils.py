@@ -24,10 +24,10 @@ def recvObj(socket):
         return pickle.loads(all_data)
     return None
 
-def sendBlock(ip_addr, blk):
+def sendObj(ip_addr, inObj):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip_addr, TCP_PORT))
-    data = pickle.dumps(blk)
+    data = pickle.dumps(inObj)
     s.send(data)
     s.close()
     return False
