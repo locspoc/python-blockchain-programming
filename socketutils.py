@@ -21,7 +21,7 @@ def recvObj(socket):
         all_data = all_data + data
     return pickle.loads(all_data)
 
-def sendBlock(ip_addr, blk, port=TCP_PORT):
+def sendObj(ip_addr, blk, port=TCP_PORT):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip_addr, port))
     data = pickle.dumps(blk)

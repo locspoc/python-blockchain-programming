@@ -46,6 +46,10 @@ for tx in newBlock.data:
     try:
         if tx.inputs[0][0] == pu1 and tx.inputs[0][1] == 4.0:
             print("Tx1 is present")
+    except:
+        pass
     try:
         if tx.inputs[0][0] == pu3 and tx.inputs[0][1] == 4.0:
             print("Tx2 is present")
+    except:
+        pass
