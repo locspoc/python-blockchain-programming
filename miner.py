@@ -8,6 +8,23 @@ import signatures
 
 wallets = ['localhost']
 tx_list = []
+head_blocks=[None]
+
+
+def findLongestBlockchain():
+    longest = -1
+    long_head = None
+    for b in head_blocks():
+        current = b
+        this_len = 0
+        while current != None:
+            this_len = this_len + 1
+            current = current.previousBlock
+        if this_len > longest:
+            long_head = b
+            longest = this_len
+    
+    return long_head
 
 def minerServer(my_ip, wallet_list, my_public):
     server = socketutils.newServerConnection(my_ip)
@@ -20,7 +37,7 @@ def minerServer(my_ip, wallet_list, my_public):
         if len(tx_list) >= 2:
             break
     # add Txs to new block
-    newBlock = txblock.TxBlock(None)
+    newBlock = txblock.TxBlock(findLongestBlockchain())
     newBlock.addTx(tx_list[0])
     newBlock.addTx(tx_list[1])
     # Compute and add minig reward

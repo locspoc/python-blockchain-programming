@@ -4,6 +4,8 @@ import socketutils
 import transactions
 import signatures
 
+head_blocks = [None]
+
 pr1,pu1 = signatures.generate_keys()
 pr2,pu2 = signatures.generate_keys()
 pr3,pu3 = signatures.generate_keys()
@@ -53,3 +55,11 @@ for tx in newBlock.data:
             print("Tx2 is present")
     except:
         pass
+
+for b in head_blocks:
+    if newBlock.previousHash = b.computeHash():
+        newBlock.previousBlock = b
+        head_blocks.remove(b)
+        head_blocks.append(newBlock)
+
+# Add newBlock to blockchain
