@@ -14,7 +14,7 @@ head_blocks=[None]
 def findLongestBlockchain():
     longest = -1
     long_head = None
-    for b in head_blocks():
+    for b in head_blocks:
         current = b
         this_len = 0
         while current != None:

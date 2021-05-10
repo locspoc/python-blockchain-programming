@@ -57,7 +57,7 @@ for tx in newBlock.data:
         pass
 
 for b in head_blocks:
-    if newBlock.previousHash = b.computeHash():
+    if newBlock.previousHash == b.computeHash():
         newBlock.previousBlock = b
         head_blocks.remove(b)
         head_blocks.append(newBlock)
