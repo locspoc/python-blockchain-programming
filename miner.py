@@ -8,7 +8,7 @@ import threading
 import time
 
 
-wallets = [('localhost',5006)]
+wallets = [('localhost',5005)]
 tx_list = []
 head_blocks=[None]
 break_now=False
@@ -50,7 +50,7 @@ def nonceFinder(wallet_list, miner_public):
         newBlock = txblock.TxBlock(findLongestBlockchain())
     # while len (tx_list) <2:
     #     time.sleep(1)
-        for tx in tx_list():
+        for tx in tx_list:
             newBlock.addTx(tx)
         # Compute and add minig reward
         total_in,total_out = newBlock.count_totals()
@@ -65,7 +65,7 @@ def nonceFinder(wallet_list, miner_public):
             # Send new block
             for ip_addr,port in wallet_list:
                 print("Sending to " + ip_addr + ":" + str(port))
-                socketutils.sendObj(ip_addr, newBlock, 5006)
+                socketutils.sendObj(ip_addr, newBlock, 5005)
             head_blocks.remove(newBlock.previousBlock)
             head_blocks.append(newBlock)
     return True
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     time.sleep(20)
     break_now=True
-    time.sleep(2)
+    time.sleep(10)
     server.close()
 
     t1.join()

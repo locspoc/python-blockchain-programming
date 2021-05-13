@@ -8,6 +8,7 @@ BUFFER_SIZE = 1024
 
 def newServerConnection(ip_addr, port=TCP_PORT):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((ip_addr,port))
     s.listen()
     return s
@@ -31,5 +32,5 @@ def sendObj(ip_addr, blk, port=TCP_PORT):
 
 if __name__ == "__main__":
     server = newServerConnection('localhost')
-    o = recvObj(server)
+    O = recvObj(server)
     print("Success!") #If returns after time, then successful
