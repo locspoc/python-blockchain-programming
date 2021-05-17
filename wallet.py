@@ -33,7 +33,7 @@ try:
 except:
     print("Error! Connection unsuccessful")
 
-server = socketutils.newServerConnection('localhost',5005)
+server = socketutils.newServerConnection('localhost',5007)
 for i in range(30):
     newBlock = socketutils.recvObj(server)
     if newBlock:

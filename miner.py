@@ -8,7 +8,7 @@ import threading
 import time
 
 
-wallets = [('localhost',5005)]
+wallets = [('localhost',5006)]
 tx_list = []
 head_blocks=[None]
 break_now=False
@@ -65,7 +65,7 @@ def nonceFinder(wallet_list, miner_public):
             # Send new block
             for ip_addr,port in wallet_list:
                 print("Sending to " + ip_addr + ":" + str(port))
-                socketutils.sendObj(ip_addr, newBlock, 5005)
+                socketutils.sendObj(ip_addr, newBlock, 5006)
             head_blocks.remove(newBlock.previousBlock)
             head_blocks.append(newBlock)
     return True
