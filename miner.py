@@ -3,31 +3,20 @@
 import socketutils
 import transactions
 import txblock
-import signatures
-import threading
-import time
+# import signatures
+# import threading
+# import time
 
 
 wallets = [('localhost',5006)]
 tx_list = []
 head_blocks=[None]
 break_now=False
+verbose = True
 
-
-def findLongestBlockchain():
-    longest = -1
-    long_head = None
-    for b in head_blocks:
-        current = b
-        this_len = 0
-        while current != None:
-            this_len = this_len + 1
-            current = current.previousBlock
-        if this_len > longest:
-            long_head = b
-            longest = this_len
-    
-    return long_head
+def StopAll():
+    global break_now
+    break_now = True
 
 def minerServer(my_addr):
     global tx_list
@@ -40,14 +29,14 @@ def minerServer(my_addr):
         newTx = socketutils.recvObj(server)
         if isinstance(newTx,transactions.Tx):
             tx_list.append(newTx)
-            print("Recd tx")
+            if verbose: print("Recd tx")
     return False
 
 def nonceFinder(wallet_list, miner_public):
     global break_now
     # add Txs to new block
     while not break_now:
-        newBlock = txblock.TxBlock(findLongestBlockchain())
+        newBlock = txblock.TxBlock(txblock.findLongestBlockchain(head_blocks))
     # while len (tx_list) <2:
     #     time.sleep(1)
         for tx in tx_list:
@@ -58,19 +47,26 @@ def nonceFinder(wallet_list, miner_public):
         mine_reward.add_output(miner_public,25.0+total_in-total_out)
         newBlock.addTx(mine_reward)
         # Find nonce
-        print("Finding Nonce...")
+        if verbose: print("Finding Nonce...")
         newBlock.find_nonce(10000)
         if newBlock.good_nonce():
-            print("Good nonce found")
+            if verbose: print("Good nonce found")
             # Send new block
             for ip_addr,port in wallet_list:
-                print("Sending to " + ip_addr + ":" + str(port))
+                if verbose: print("Sending to " + ip_addr + ":" + str(port))
                 socketutils.sendObj(ip_addr, newBlock, 5006)
             head_blocks.remove(newBlock.previousBlock)
             head_blocks.append(newBlock)
+            for tx in newBlock.data:
+                if tx != mine_reward:
+                    tx_list.remove(tx)
     return True
 
 if __name__ == "__main__":
+
+    import signatures
+    import threading
+    import time
 
     my_pr, my_pu = signatures.generate_keys()
     t1 = threading.Thread(target=minerServer, args=(('localhost', 5005),))
@@ -128,7 +124,7 @@ if __name__ == "__main__":
 
     time.sleep(20)
     break_now=True
-    time.sleep(10)
+    time.sleep(2)
     server.close()
 
     t1.join()
